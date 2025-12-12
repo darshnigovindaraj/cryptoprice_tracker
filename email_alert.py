@@ -1,8 +1,8 @@
 import yagmail
 
-SENDER_EMAIL = "darshnigovind2005@gmail.com"
-APP_PASSWORD = "DARSHNIGOVINDARAJ@2005"
-RECEIVER_EMAIL = "23cst008@vcew.ac.in"
+SENDER_EMAIL = "xxx enter your email"
+APP_PASSWORD = "yyy"
+RECEIVER_EMAIL = "xxx "
 
 def send_email(subject, body):
     yag = yagmail.SMTP(SENDER_EMAIL, APP_PASSWORD)
