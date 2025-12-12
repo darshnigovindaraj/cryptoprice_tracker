@@ -17,6 +17,7 @@ import time
 import warnings
 warnings.filterwarnings("ignore")
 
+
 def scrape_crypto():
     driver = None
     try:
@@ -25,12 +26,14 @@ def scrape_crypto():
         options.add_argument("--no-sandbox")
         options.add_argument("--disable-dev-shm-usage")
 
+
         driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
         driver.get("https://coinmarketcap.com/")
-        
+       
         wait = WebDriverWait(driver, 20)
         table = wait.until(EC.presence_of_element_located((By.TAG_NAME, "tbody")))
         rows = table.find_elements(By.TAG_NAME, "tr")[:10]
+
 
         coins, prices, changes, market_caps = [], [], [], []
         for row in rows:
@@ -41,17 +44,20 @@ def scrape_crypto():
                 changes.append(cols[4].text.strip())
                 market_caps.append(cols[6].text.strip())
 
+
         driver.quit()
 
-        def clean_price(p): 
+
+        def clean_price(p):
             try: return float(p.replace("$","").replace(",",""))
             except: return 0.0
-        def clean_change(c): 
+        def clean_change(c):
             try: return float(c.replace("%",""))
             except: return 0.0
-        def clean_market(m): 
+        def clean_market(m):
             try: return float(m.replace("$","").replace(",",""))
             except: return 0.0
+
 
         df = pd.DataFrame({
             "Coin": coins,
@@ -61,11 +67,13 @@ def scrape_crypto():
             "Time": datetime.now()
         })
 
+
         file_name = datetime.now().strftime("crypto_%Y-%m-%d_%H%M.csv")
         df.to_csv(file_name, index=False)
         print(f"✅ Saved: {file_name}")
 
-        # Chart 
+
+        # Chart
         plt.figure(figsize=(12,6))
         top_idx = df["24h Change"].idxmax()
         colors = ["black" if i == top_idx else "violet" for i in range(len(df))]
@@ -77,6 +85,7 @@ def scrape_crypto():
         plt.close()
         print("📈 Chart saved!")
 
+
         big_gainers = df[df["24h Change"] > 5]
         if not big_gainers.empty:
             print(f"🚀 {len(big_gainers)} big gainers!")
@@ -87,16 +96,19 @@ def scrape_crypto():
         else:
             print("📊 No big gainers")
 
+
         return df
+
 
     except Exception as e:
         print(f"❌ Error: {e}")
         if driver: driver.quit()
         return pd.DataFrame()
 
+
 if __name__ == "__main__":
     while True:
         print("🚀 Starting...")
         scrape_crypto()
         print("⏱️  1 hour break...\n")
-        time.sleep(3600)
+        time.sleep(3600) 
